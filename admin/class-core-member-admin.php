@@ -129,7 +129,7 @@ class Core_Member_Admin {
   public function validate($input) {    
     $valid = array();
 
-    $valid['client-id'] = filter_var($input['client-id'], FILTER_SANITIZE_STRING);
+    $valid['app-id'] = filter_var($input['app-id'], FILTER_SANITIZE_STRING);
     $valid['client-secret'] = filter_var($input['client-secret'], FILTER_SANITIZE_STRING);
 
     return $valid;

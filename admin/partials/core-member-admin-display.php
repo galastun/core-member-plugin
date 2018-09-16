@@ -22,7 +22,7 @@
 
   <?php
     $options = get_option($this->plugin_name);
-    $clientId = $options['client-id'];
+    $appId = $options['app-id'];
     $clientSecret = $options['client-secret'];
   ?>
 
@@ -33,15 +33,15 @@
 
   <?php settings_fields($this->plugin_name); ?>
     <fieldset>
-      <legend class="screen-reader-text"><span>Client API ID</span></legend>
-      <label for="<?php echo $this->plugin_name; ?>-client-id">
-        <span><?php esc_attr_e('Client API ID', $this->plugin_name); ?></span>
+      <legend class="screen-reader-text"><span>Application ID</span></legend>
+      <label for="<?php echo $this->plugin_name; ?>-app-id">
+        <span><?php esc_attr_e('Application ID', $this->plugin_name); ?></span>
         <input 
           type="text" 
-          id="<?php echo $this->plugin_name; ?>-client-id" 
-          name="<?php echo $this->plugin_name; ?>[client-id]"
+          id="<?php echo $this->plugin_name; ?>-app-id" 
+          name="<?php echo $this->plugin_name; ?>[app-id]"
           size=75
-          value="<?php if(!empty($clientSecret)) echo $clientSecret; ?>"/>
+          value="<?php if(!empty($appId)) echo $appId; ?>"/>
       </label>
     </fieldset>
 

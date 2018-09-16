@@ -18,7 +18,7 @@
 <?php
   if(count($_POST) > 0) {
     if(isset($_POST['core-member']['email'])) {
-      echo $_POST['core-member']['email'];
+      $this->update_user($_POST['core-member']);
     }
   }
 ?>
@@ -48,17 +48,6 @@
       <legend class="screen-reader-text"><span>I attend weekly services.</span></legend>
       <label for="<?php echo $this->plugin_name; ?>-attend-weekly">
         <input type="checkbox" 
-          id="<?php echo $this->plugin_name; ?>-attend-weekly 
-          name="<?php echo $this->plugin_name; ?>[attend-weekly]" 
-          value="1"/>
-          <span><?php esc_attr_e('I attend weekly services.', $this->plugin_name); ?></span>
-      </label>
-    </fieldset>
-
-    <fieldset>
-      <legend class="screen-reader-text"><span>I attend weekly services.</span></legend>
-      <label for="<?php echo $this->plugin_name; ?>-attend-weekly">
-        <input type="checkbox" 
           id="<?php echo $this->plugin_name; ?>-attend-weekly"
           name="<?php echo $this->plugin_name; ?>[attend-weekly]" 
           value="1"/>
@@ -81,7 +70,7 @@
       <legend class="screen-reader-text"><span>I am in a LifeGroup.</span></legend>
       <label for="<?php echo $this->plugin_name; ?>-attend-lifegroup">
         <input type="checkbox" 
-          id="<?php echo $this->plugin_name; ?>-attend-lifegroup 
+          id="<?php echo $this->plugin_name; ?>-attend-lifegroup"
           name="<?php echo $this->plugin_name; ?>[attend-lifegroup]" 
           value="1"/>
           <span><?php esc_attr_e('I am in a LifeGroup.', $this->plugin_name); ?></span>
@@ -92,7 +81,7 @@
       <legend class="screen-reader-text"><span>I am educating myself in God's Word.</span></legend>
       <label for="<?php echo $this->plugin_name; ?>-educating-self">
         <input type="checkbox" 
-          id="<?php echo $this->plugin_name; ?>-educating-self 
+          id="<?php echo $this->plugin_name; ?>-educating-self"
           name="<?php echo $this->plugin_name; ?>[educating-self]" 
           value="1"/>
           <span><?php esc_attr_e('I am educating myself in God\'s Word.', $this->plugin_name); ?></span>
