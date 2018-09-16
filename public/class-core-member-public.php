@@ -1,5 +1,7 @@
 <?php
 
+require_once('UserUpdate.php');
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -48,10 +50,8 @@ class Core_Member_Public {
 	 * @param      string    $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+    $this->version = $version;
 	}
 
 	/**
@@ -98,6 +98,18 @@ class Core_Member_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/core-member-public.js', array( 'jquery' ), $this->version, false );
 
-	}
+  }
 
+  public function register_shortcodes() {
+    add_shortcode('core-member', array($this, 'add_core_form'));
+  }
+  
+  public function add_core_form() {
+    include_once( 'partials/core-member-public-display.php' );
+  }
+
+  public function update_user($postInfo) {
+    $userUpdate = new UserUpdate($this->plugin_name, $postInfo['email']);
+    $userUpdate->updateUser($postInfo);
+  }
 }
