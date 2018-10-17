@@ -45,7 +45,15 @@
     </fieldset>
 
     <fieldset>
-      <legend class="screen-reader-text"><span>I attend weekly services.</span></legend>
+      <label for="<?php echo $this->plugin_name; ?>-include-household">
+        <input type="checkbox" 
+          id="<?php echo $this->plugin_name; ?>-include-household"
+          name="<?php echo $this->plugin_name; ?>[include-household]" 
+          value="1"/>
+          <span><?php esc_attr_e('Include my entire family.', $this->plugin_name); ?></span>
+      </label>
+    </fieldset>
+    <fieldset>
       <label for="<?php echo $this->plugin_name; ?>-attend-weekly">
         <input type="checkbox" 
           id="<?php echo $this->plugin_name; ?>-attend-weekly"
@@ -56,7 +64,6 @@
     </fieldset>
 
     <fieldset>
-      <legend class="screen-reader-text"><span>I am serving in Ministry.</span></legend>
       <label for="<?php echo $this->plugin_name; ?>-serving-ministry">
         <input type="checkbox" 
           id="<?php echo $this->plugin_name; ?>-serving-ministry"
@@ -67,7 +74,6 @@
     </fieldset>
 
     <fieldset>
-      <legend class="screen-reader-text"><span>I am in a LifeGroup.</span></legend>
       <label for="<?php echo $this->plugin_name; ?>-attend-lifegroup">
         <input type="checkbox" 
           id="<?php echo $this->plugin_name; ?>-attend-lifegroup"
@@ -78,7 +84,6 @@
     </fieldset>
 
     <fieldset>
-      <legend class="screen-reader-text"><span>I am educating myself in God's Word.</span></legend>
       <label for="<?php echo $this->plugin_name; ?>-educating-self">
         <input type="checkbox" 
           id="<?php echo $this->plugin_name; ?>-educating-self"
