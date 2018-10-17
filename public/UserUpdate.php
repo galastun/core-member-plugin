@@ -43,6 +43,14 @@ class UserUpdate {
   }
 
   public function updateUser($postInfo) {
+    $this->sendUserInfo($this->id, $postInfo);
+
+    if($postInfo['include-household'] == 1) {
+      $this->setHouseholdMembers($postInfo);
+    }
+  }
+
+  private function sendUserInfo($id, $postInfo) {
     foreach($postInfo as $key => $value) {
       if($key == 'email') {
         continue;
@@ -51,13 +59,13 @@ class UserUpdate {
       if($value == '1') {
         $this->setValue('Yes');
         $this->setFieldDef($key);
-        $this->postUpdate();
+        $this->postUpdate($id);
       }
     }
   }
 
-  private function postUpdate() {
-    $url = 'https://api.planningcenteronline.com/people/v2/people/' . $this->id . '/field_data';
+  private function postUpdate($id) {
+    $url = 'https://api.planningcenteronline.com/people/v2/people/' . $id . '/field_data';
     $result = wp_remote_post($url, array(
       'body' => json_encode($this->data),
       'headers' => array(
@@ -75,7 +83,7 @@ class UserUpdate {
   }
 
   private function getUserId() {
-    $url = 'https://api.planningcenteronline.com/people/v2/people?where[search_name_or_email]=' . $this->email;
+    $url = 'https://api.planningcenteronline.com/people/v2/people?where[search_name_or_email]=' . $this->email . '&include=households';
     $result = wp_remote_get($url, array(
       'headers' => array(
         'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
@@ -84,6 +92,23 @@ class UserUpdate {
     
     $json = json_decode($result['body']);
     $this->id = $json->data[0]->id;
+    $this->householdId = $json->included[0]->id;
+  }
+
+  private function setHouseholdMembers($postInfo) {
+    $this->household = array();
+
+    $url = 'https://api.planningcenteronline.com/people/v2/households/' . $this->householdId .'?include=people';
+    $result = wp_remote_get($url, array(
+      'headers' => array(
+        'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
+      )
+    ));
+    
+    $json = json_decode($result['body']);
+    foreach($json->included as $person) {
+      $this->sendUserInfo($person->id, $postInfo);
+    }
   }
 }
 ?>
