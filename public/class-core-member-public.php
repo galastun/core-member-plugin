@@ -100,14 +100,31 @@ class Core_Member_Public {
 
   }
 
+  /**
+   * Registers the shortcodes to be used with the plugin.
+   * 
+   * @return {void}
+   */
   public function register_shortcodes() {
     add_shortcode('core-member', array($this, 'add_core_form'));
   }
   
+  /**
+   * Adds the CORE Member Form to the publid display.
+   * 
+   * @return {void}
+   */
   public function add_core_form() {
     include_once( 'partials/core-member-public-display.php' );
   }
 
+  /**
+   * Takes the POST body data from the client form and updates the user on the
+   * Planning Center Server.
+   * 
+   * @param {Object} postInfo the POST body from the client form
+   * @return {void}
+   */
   public function update_user($postInfo) {
     $userUpdate = new UserUpdate($this->plugin_name, $postInfo['email']);
     $userUpdate->updateUser($postInfo);
