@@ -100,6 +100,11 @@ class Core_Member_Admin {
 
   }
   
+  /**
+   * Adds the admin menu for the plugin.
+   * 
+   * @return {void}
+   */
   public function add_plugin_admin_menu() {
       add_options_page(
         'CORE Member Setup', 
@@ -110,6 +115,12 @@ class Core_Member_Admin {
       );
   }
 
+  /**
+   * Adds the settings links to dislpay the admin page.
+   * 
+   * @param {String} links the links to use
+   * @return {Array}
+   */
   public function add_action_links( $links ) {
     $settings_link = array(
       '<a href="' . admin_url( 'options-general.php?page=' . $this->plugin_name ) . '">' . __('Settings', $this->plugin_name) . '</a>',
@@ -118,14 +129,30 @@ class Core_Member_Admin {
 
   }
 
+  /**
+   * Displays the plugin setup page.
+   * 
+   * @return {void}
+   */
   public function display_plugin_setup_page() {
       include_once( 'partials/core-member-admin-display.php' );
   }
 
+  /**
+   * Sets up the validate function to be run on POST.
+   * 
+   * @return {void}
+   */
   public function options_update() {
     register_setting($this->plugin_name, $this->plugin_name, array($this, 'validate'));
   }
 
+  /**
+   * Validates the input from the Admin page to ensure it is acceptable.
+   * 
+   * @param {Object} input The POST body from the admin form.
+   * @return {Boolean} 
+   */
   public function validate($input) {    
     $valid = array();
 

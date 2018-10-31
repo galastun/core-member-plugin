@@ -1,6 +1,7 @@
 <?php
 
 require_once('UserUpdate.php');
+require_once('Member.php');
 
 /**
  * The public-facing functionality of the plugin.
@@ -23,6 +24,7 @@ require_once('UserUpdate.php');
  * @author     Brandon Kissam <brandon.kissam@gmail.com>
  */
 class Core_Member_Public {
+  public $state = 'main';
 
 	/**
 	 * The ID of this plugin.
@@ -100,16 +102,96 @@ class Core_Member_Public {
 
   }
 
+  /**
+   * Registers the shortcodes to be used with the plugin.
+   * 
+   * @return {void}
+   */
   public function register_shortcodes() {
     add_shortcode('core-member', array($this, 'add_core_form'));
   }
   
+  /**
+   * Adds the CORE Member Form to the publid display.
+   * 
+   * @return {void}
+   */
   public function add_core_form() {
     include_once( 'partials/core-member-public-display.php' );
   }
 
+  /**
+   * Takes the POST body data from the client form and updates the user on the
+   * Planning Center Server.
+   * 
+   * @param {Object} postInfo the POST body from the client form
+   * @return {void}
+   */
   public function update_user($postInfo) {
     $userUpdate = new UserUpdate($this->plugin_name, $postInfo['email']);
-    $userUpdate->updateUser($postInfo);
+    $userExists = $userUpdate->init();
+
+    if($userExists) {
+      $userUpdate->updateUser($postInfo);
+      $this->options = array(
+        'attend-weekly' => $postInfo['attend-weekly'],
+        'serving-ministry' => $postInfo['serving-ministry'],
+        'attend-lifegroup' => $postInfo['attend-lifegroup'],
+        'educating-self' => $postInfo['educating-self'],
+      );
+      $this->state = 'success';
+    } else {
+      $this->state = 'add';
+    }
+  }
+
+  /**
+   * Adds a new member to Planning Center and any household members.
+   * 
+   * @param {Object} postInfo the POST body from the client form
+   * @return {void}
+   */
+  public function add_new($postInfo) {
+    $householdMembers = array();
+
+    // Set Head of Household
+    $member = new Member($this->plugin_name);
+    $member->setEmail($postInfo['email']);
+    $member->setFirstName($postInfo['firstName'][0]);
+    $member->setLastName($postInfo['lastName'][0]);
+
+    $member->create();
+
+    for($i = 1; $i < sizeof($postInfo['firstName']); $i++) {
+      $householdMember = new Member($this->plugin_name);
+      $householdMember->setFirstName($postInfo['firstName'][$i]);
+      $householdMember->setLastName($postInfo['lastName'][$i]);
+      $householdMember->create();
+      array_push($householdMembers, $householdMember);
+    }
+
+    if(sizeof($householdMembers) > 0) {
+      $member->addHousehold($householdMembers);
+    }
+
+    $userUpdate = new UserUpdate($this->plugin_name, $postInfo['email']);
+    $userUpdate->init();
+
+    $userUpdate->updateUser(array(
+      'email' => $postInfo['email'],
+      'include-household' => $postInfo['include-household'],
+      'attend-weekly' => $postInfo['attend-weekly'],
+      'serving-ministry' => $postInfo['serving-ministry'],
+      'attend-lifegroup' => $postInfo['attend-lifegroup'],
+      'educating-self' => $postInfo['educating-self'],
+    ));
+
+    $this->options = array(
+      'attend-weekly' => $postInfo['attend-weekly'],
+      'serving-ministry' => $postInfo['serving-ministry'],
+      'attend-lifegroup' => $postInfo['attend-lifegroup'],
+      'educating-self' => $postInfo['educating-self'],
+    );
+    $this->state = 'success';
   }
 }
