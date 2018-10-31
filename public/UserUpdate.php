@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Handles user information received from the frontend and calls the 
  * planning center API to update a the user.
  */
 class UserUpdate {
+  private $apiUrl = 'https://api.planningcenteronline.com/people/v2/';
   private $map = array (
     'attend-weekly' => '196809',
     'serving-ministry' => '196811',
@@ -38,7 +40,19 @@ class UserUpdate {
     $this->clientSecret = $options['client-secret'];
 
     $this->email = $email;
+  }
+
+  public function setId($id) {
+    $this->id = $id;
+  }
+
+  public function init() {
+    if(!$this->checkEmailExists($this->email)) {
+      return false;
+    }
+
     $this->getUserId();
+    return true;
   }
 
   /**
@@ -105,7 +119,7 @@ class UserUpdate {
    * @return {void}
    */
   private function postUpdate($id) {
-    $url = 'https://api.planningcenteronline.com/people/v2/people/' . $id . '/field_data';
+    $url = "$this->apiUrl/people/$id/field_data";
     $result = wp_remote_post($url, array(
       'body' => json_encode($this->data),
       'headers' => array(
@@ -128,7 +142,7 @@ class UserUpdate {
    * @return {String}
    */
   private function getUserId() {
-    $url = 'https://api.planningcenteronline.com/people/v2/people?where[search_name_or_email]=' . $this->email . '&include=households';
+    $url = "$this->apiUrl/people?where[search_name_or_email]=$this->email&include=households";
     $result = wp_remote_get($url, array(
       'headers' => array(
         'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
@@ -149,7 +163,7 @@ class UserUpdate {
   private function setHouseholdMembers($postInfo) {
     $this->household = array();
 
-    $url = 'https://api.planningcenteronline.com/people/v2/households/' . $this->householdId .'?include=people';
+    $url = "$this->apiUrl/households/$this->householdId?include=people";
     $result = wp_remote_get($url, array(
       'headers' => array(
         'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
@@ -160,6 +174,24 @@ class UserUpdate {
     foreach($json->included as $person) {
       $this->sendUserInfo($person->id, $postInfo);
     }
+  }
+
+  /**
+   * Check if an email exists in Planning Center
+   * 
+   * @param {String} $email The user's email to check
+   * @returns {Bool}
+   */
+  private function checkEmailExists($email) {
+    $url = $this->apiUrl . '/emails?where[address]=' . $email;
+    $result = wp_remote_get($url, array(
+      'headers' => array(
+        'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
+      )
+    ));
+    
+    $json = json_decode($result['body']);
+    return sizeof($json->data) > 0;
   }
 }
 ?>
