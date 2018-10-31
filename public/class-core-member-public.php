@@ -132,8 +132,14 @@ class Core_Member_Public {
     $userExists = $userUpdate->init();
 
     if($userExists) {
-      print_r($postInfo);
       $userUpdate->updateUser($postInfo);
+      $this->options = array(
+        'attend-weekly' => $postInfo['attend-weekly'],
+        'serving-ministry' => $postInfo['serving-ministry'],
+        'attend-lifegroup' => $postInfo['attend-lifegroup'],
+        'educating-self' => $postInfo['educating-self'],
+      );
+      $this->state = 'success';
     } else {
       $this->state = 'add';
     }
@@ -179,5 +185,13 @@ class Core_Member_Public {
       'attend-lifegroup' => $postInfo['attend-lifegroup'],
       'educating-self' => $postInfo['educating-self'],
     ));
+
+    $this->options = array(
+      'attend-weekly' => $postInfo['attend-weekly'],
+      'serving-ministry' => $postInfo['serving-ministry'],
+      'attend-lifegroup' => $postInfo['attend-lifegroup'],
+      'educating-self' => $postInfo['educating-self'],
+    );
+    $this->state = 'success';
   }
 }

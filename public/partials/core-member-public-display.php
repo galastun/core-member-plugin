@@ -34,6 +34,9 @@
       case 'add':
         include_once('core-member-add-member.php');
         break;
+      case 'success':
+        include_once('core-member-success.php');
+        break;
       default: 
         include_once('core-member-main-form.php');
     }
