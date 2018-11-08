@@ -8,7 +8,7 @@
 ?>
 
 <form method="POST">
-  <button type="submit">Submit</button>
+  
   <div class="flex-col">
     <label for="email">Email</label>
     <input id="email" name="<?php echo $prefix; ?>[email]" type="text" value="<?php echo $_POST['core-member']['email'] ?>"/>
@@ -27,3 +27,5 @@
   </div>
 </form>
 <button id="add-more">Add</button>
+
+<button type="submit" class="fusion-button button-flat fusion-button-round button-large button-default button-1">Submit</button>
