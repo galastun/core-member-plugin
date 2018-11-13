@@ -26,6 +26,7 @@
     
   </div>
 </form>
-<button id="add-more">Add</button>
+<button class="fusion-button button-flat fusion-button-round button-large button-default button-1" id="add-more">Add</button>
+<div class="fusion-clearfix"></div>
 
 <button type="submit" class="fusion-button button-flat fusion-button-round button-large button-default button-1">Submit</button>
