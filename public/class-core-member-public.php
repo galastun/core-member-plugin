@@ -154,6 +154,8 @@ class Core_Member_Public {
   public function add_new($postInfo) {
     $householdMembers = array();
 
+    $postInfo['age'] = array_values($postInfo['age']);
+  
     // Set Head of Household
     $member = new Member($this->plugin_name);
     $member->setEmail($postInfo['email']);
@@ -166,6 +168,7 @@ class Core_Member_Public {
       $householdMember = new Member($this->plugin_name);
       $householdMember->setFirstName($postInfo['firstName'][$i]);
       $householdMember->setLastName($postInfo['lastName'][$i]);
+      $householdMember->setAge($postInfo['age'][$i]);
       $householdMember->create();
       array_push($householdMembers, $householdMember);
     }
