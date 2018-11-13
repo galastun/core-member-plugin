@@ -2,11 +2,18 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+ .additional-member {
+   padding: 12px 0;
+ }
+
  .extra-member {
   position: relative;
   margin: 24px 0;
   padding: 24px 0;
   border-top: 1px solid #888;
+}
+
+.extra-member:last-child {
   border-bottom: 1px solid #888;
 }
 
@@ -15,4 +22,8 @@
   top: 5px;
   right: 5px;
   cursor: pointer;
+}
+
+.extra-member input[type="radio"] {
+  margin: 6px 12px 6px 0;
 }
