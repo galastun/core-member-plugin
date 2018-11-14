@@ -16,17 +16,16 @@
     <input id="firstName" name="<?php echo $prefix; ?>[firstName][]" type="text" />
     <label for="lastName">Last Name</label>
     <input id="lastName" name="<?php echo $prefix; ?>[lastName][]" type="text" />
+    <input type="hidden" name="<?php echo $prefix; ?>[age][0]" value="adult" />
     <input type="hidden" name="<?php echo $prefix; ?>[include-household]" value="<?php echo $includeHousehold; ?>" />
     <input type="hidden" name="<?php echo $prefix; ?>[attend-weekly]" value="<?php echo $attendWeekly; ?>" />
     <input type="hidden" name="<?php echo $prefix; ?>[serving-ministry]" value="<?php echo $servingMinistry; ?>" />
     <input type="hidden" name="<?php echo $prefix; ?>[attend-lifegroup]" value="<?php echo $attendLifegroup; ?>" />
     <input type="hidden" name="<?php echo $prefix; ?>[educating-self]" value="<?php echo $educatingSelf; ?>" />
   </div>
-  <div id="additional-members">
+  <div id="additional-members" class="additional-members">
     
   </div>
+  <button type="button" id="add-more">Add</button>
+  <button type="submit" class="fusion-button button-flat fusion-button-round button-large button-default button-1">Submit</button>
 </form>
-<button class="fusion-button button-flat fusion-button-round button-large button-default button-1" id="add-more">Add</button>
-<div class="fusion-clearfix"></div>
-
-<button type="submit" class="fusion-button button-flat fusion-button-round button-large button-default button-1">Submit</button>

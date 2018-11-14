@@ -15,10 +15,6 @@
       $options = get_option($pluginName);
       $this->appId = $options['app-id'];
       $this->clientSecret = $options['client-secret'];
-
-      
-      $this->lastName = $lastName;
-      $this->email = $email;
     }
 
     /**
@@ -39,6 +35,10 @@
      */
     public function setLastName($lastName) {
       $this->lastName = $lastName;
+    }
+
+    public function setAge($age) {
+      $this->child = $age == 'child';
     }
 
     /**
@@ -63,7 +63,8 @@
           'data' => array(
             'attributes' => array(
               'first_name' => $this->firstName,
-              'last_name' => $this->lastName
+              'last_name' => $this->lastName,
+              'child' => $this->child
             )
           )
         )),
