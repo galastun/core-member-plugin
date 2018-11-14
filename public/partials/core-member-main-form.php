@@ -61,5 +61,5 @@
     </label>
   </fieldset>
 
-  <button type="submit">Submit</button>
+  <button type="submit" class="fusion-button button-flat fusion-button-round button-large button-default button-1">Submit</button>
 </form>
