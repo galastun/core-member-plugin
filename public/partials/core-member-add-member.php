@@ -26,6 +26,7 @@
   <div id="additional-members" class="additional-members">
     
   </div>
-  <button type="button" id="add-more">Add</button>
+  <button type="button" class="fusion-button button-flat fusion-button-round button-large button-default button-1" id="add-more">Add</button>
+	<div class="fusion-clearfix" style="padding-bottom: 20px;"></div>
   <button type="submit" class="fusion-button button-flat fusion-button-round button-large button-default button-1">Submit</button>
 </form>
