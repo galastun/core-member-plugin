@@ -108,6 +108,10 @@ class UserUpdate {
         $this->setValue('Yes');
         $this->setFieldDef($key);
         $this->postUpdate($id);
+      } else {
+        $this->setValue('No');
+        $this->setFieldDef($key);
+        $this->postUpdate($id);
       }
     }
   }
