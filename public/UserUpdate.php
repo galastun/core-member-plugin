@@ -5,7 +5,8 @@
  * planning center API to update a the user.
  */
 class UserUpdate {
-  private $apiUrl = 'https://api.planningcenteronline.com/people/v2/';
+  private $id;
+  private $apiUrl = 'https://api.planningcenteronline.com/people/v2';
   private $map = array (
     'attend-weekly' => '196809',
     'serving-ministry' => '196811',
@@ -13,7 +14,7 @@ class UserUpdate {
     'educating-self' => '196813'
   );
 
-  public $data = array (
+  private $data = array (
     'data' => array (
       'type' => 'FieldDatum',
       'attributes' => array (
@@ -34,16 +35,9 @@ class UserUpdate {
    * Sets the keys, secrets and the user's email/id
    * @constructor
    */
-  public function __construct($pluginName, $email){
-    $options = get_option($pluginName);
-    $this->appId = $options['app-id'];
-    $this->clientSecret = $options['client-secret'];
-
+  public function __construct(HttpHelper $httpHelper, $email) {
+    $this->httpHelper = $httpHelper;
     $this->email = $email;
-  }
-
-  public function setId($id) {
-    $this->id = $id;
   }
 
   public function init() {
@@ -53,26 +47,6 @@ class UserUpdate {
 
     $this->getUserId();
     return true;
-  }
-
-  /**
-   * Sets the field definition for the Planning Center API.
-   * @param {String} value the id to set
-   * @returns {void}
-   */
-  public function setFieldDef($value) {
-    $this->data['data']['relationships']['field_definition']['data']['id'] = $this->map[$value];
-  }
-
-  /**
-   * Sets the answer to the question and sets it in the Planning Center API
-   * format.
-   * 
-   * @param {String} value Yes|No
-   * @return {void}
-   */
-  public function setValue($value) {
-    $this->data['data']['attributes']['value'] = $value;
   }
 
   /**
@@ -91,6 +65,35 @@ class UserUpdate {
   }
 
   /**
+   * Sets the ID of the User.
+   * 
+   * @param {String} $value The ID to set.
+   */
+  public function setId($value) {
+    $this->id = $value;
+  }
+
+  /**
+   * Sets the field definition for the Planning Center API.
+   * @param {String} value the id to set
+   * @returns {void}
+   */
+  private function setFieldDef($value) {
+    $this->data['data']['relationships']['field_definition']['data']['id'] = $this->map[$value];
+  }
+
+  /**
+   * Sets the answer to the question and sets it in the Planning Center API
+   * format.
+   * 
+   * @param {String} value Yes|No
+   * @return {void}
+   */
+  private function setValue($value) {
+    $this->data['data']['attributes']['value'] = $value;
+  }
+
+  /**
    * Sets the values for the body of the POST request to the Planning Center
    * API and then sends it.
    * 
@@ -99,13 +102,17 @@ class UserUpdate {
    * @return {void}
    */
   private function sendUserInfo($id, $postInfo) {
-    foreach($postInfo as $key => $value) {
+    foreach($this->map as $key => $value) {
       if($key == 'email') {
         continue;
       }
 
-      if($value == '1') {
+      if(isset($postInfo[$key])) {
         $this->setValue('Yes');
+        $this->setFieldDef($key);
+        $this->postUpdate($id);
+      } else {
+        $this->setValue('No');
         $this->setFieldDef($key);
         $this->postUpdate($id);
       }
@@ -120,14 +127,7 @@ class UserUpdate {
    */
   private function postUpdate($id) {
     $url = "$this->apiUrl/people/$id/field_data";
-    $result = wp_remote_post($url, array(
-      'body' => json_encode($this->data),
-      'headers' => array(
-        'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
-      )
-    ));
-
-    $json = json_decode($result['body']);
+    $json = $this->httpHelper->post($url, $this->data);
 
     if(array_key_exists('errors', $json)) {
       if($json->errors[0]->detail == 'An existing field datum already exists for this record and field definition.') {
@@ -142,16 +142,12 @@ class UserUpdate {
    * @return {String}
    */
   private function getUserId() {
-    $url = "$this->apiUrl/people?where[search_name_or_email]=$this->email&include=households";
-    $result = wp_remote_get($url, array(
-      'headers' => array(
-        'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
-      )
-    ));
+    $url = "$this->apiUrl/people?where[search_name_or_email]=$this->email&include=field_data,households";
     
-    $json = json_decode($result['body']);
+    $json = $this->httpHelper->get($url);
+
     $this->id = $json->data[0]->id;
-    $this->householdId = $json->included[0]->id;
+    $this->householdId = $this->getHousehold($json->included)->id;
   }
 
   /**
@@ -164,16 +160,27 @@ class UserUpdate {
     $this->household = array();
 
     $url = "$this->apiUrl/households/$this->householdId?include=people";
-    $result = wp_remote_get($url, array(
-      'headers' => array(
-        'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
-      )
-    ));
-    
-    $json = json_decode($result['body']);
+    $json = $this->httpHelper->get($url);
+
     foreach($json->included as $person) {
       $this->sendUserInfo($person->id, $postInfo);
     }
+  }
+
+  /**
+   * Gets the household from the included data field.
+   * 
+   * @param {Array} $data The include field of the return data.
+   * @return {Object} 
+   */
+  private function getHousehold($data) {
+    foreach($data as $obj) {
+      if($obj->type == 'Household') {
+        return $obj;
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -183,14 +190,9 @@ class UserUpdate {
    * @returns {Bool}
    */
   private function checkEmailExists($email) {
-    $url = $this->apiUrl . '/emails?where[address]=' . $email;
-    $result = wp_remote_get($url, array(
-      'headers' => array(
-        'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->clientSecret)
-      )
-    ));
-    
-    $json = json_decode($result['body']);
+    $url = "$this->apiUrl/emails?where[address]=$email";
+    $json = $this->httpHelper->get($url);
+
     return sizeof($json->data) > 0;
   }
 }

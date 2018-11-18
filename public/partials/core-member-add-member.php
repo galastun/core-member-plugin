@@ -18,10 +18,20 @@
     <input id="lastName" name="<?php echo $prefix; ?>[lastName][]" type="text" />
     <input type="hidden" name="<?php echo $prefix; ?>[age][0]" value="adult" />
     <input type="hidden" name="<?php echo $prefix; ?>[include-household]" value="<?php echo $includeHousehold; ?>" />
-    <input type="hidden" name="<?php echo $prefix; ?>[attend-weekly]" value="<?php echo $attendWeekly; ?>" />
-    <input type="hidden" name="<?php echo $prefix; ?>[serving-ministry]" value="<?php echo $servingMinistry; ?>" />
-    <input type="hidden" name="<?php echo $prefix; ?>[attend-lifegroup]" value="<?php echo $attendLifegroup; ?>" />
-    <input type="hidden" name="<?php echo $prefix; ?>[educating-self]" value="<?php echo $educatingSelf; ?>" />
+    <?php 
+      if(isset($attendWeekly)) {
+        echo "<input type='hidden' name='{$prefix}[attend-weekly]' value='$attendWeekly' />"; 
+      }
+      if(isset($servingMinistry)) {
+        echo "<input type='hidden' name='{$prefix}[serving-ministry]' value='$servingMinistry' />"; 
+      }
+      if(isset($attendLifegroup)) {
+        echo "<input type='hidden' name='{$prefix}[attend-lifegroup]' value='$attendLifegroup' />"; 
+      }
+      if(isset($educatingSelf)) {
+        echo "<input type='hidden' name='{$prefix}[educating-self]' value='$educationSelf' />"; 
+      }
+    ?>
   </div>
   <div id="additional-members" class="additional-members">
     
