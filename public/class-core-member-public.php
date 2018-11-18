@@ -177,7 +177,17 @@ class Core_Member_Public {
       $member->addHousehold($householdMembers);
     }
 
-    $userUpdate = new UserUpdate($this->plugin_name, $postInfo['email']);
+    $options = get_option($this->pluginName);
+
+    $httpHelper = new HttpHelper(
+      $options['app-id'], 
+      $options['client_secret']
+    );
+
+    $userUpdate = new UserUpdate(
+      $httpHelper,
+      $postInfo['email']
+    );
     $userUpdate->init();
 
     $userUpdate->updateUser(array(
