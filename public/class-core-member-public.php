@@ -1,5 +1,6 @@
 <?php
 
+require_once('HttpHelper.php');
 require_once('UserUpdate.php');
 require_once('Member.php');
 
@@ -128,7 +129,14 @@ class Core_Member_Public {
    * @return {void}
    */
   public function update_user($postInfo) {
-    $userUpdate = new UserUpdate($this->plugin_name, $postInfo['email']);
+    $options = get_option($this->plugin_name);
+
+    $httpHelper = new HttpHelper(
+      $options['app-id'], 
+      $options['client-secret']
+    );
+
+    $userUpdate = new UserUpdate($httpHelper, $postInfo['email']);
     $userExists = $userUpdate->init();
 
     if($userExists) {
@@ -177,11 +185,11 @@ class Core_Member_Public {
       $member->addHousehold($householdMembers);
     }
 
-    $options = get_option($this->pluginName);
+    $options = get_option($this->plugin_name);
 
     $httpHelper = new HttpHelper(
       $options['app-id'], 
-      $options['client_secret']
+      $options['client-secret']
     );
 
     $userUpdate = new UserUpdate(

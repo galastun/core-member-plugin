@@ -35,7 +35,7 @@ class UserUpdate {
    * Sets the keys, secrets and the user's email/id
    * @constructor
    */
-  public function __construct($httpHelper, $email) {
+  public function __construct(HttpHelper $httpHelper, $email) {
     $this->httpHelper = $httpHelper;
     $this->email = $email;
   }
@@ -190,7 +190,7 @@ class UserUpdate {
    * @returns {Bool}
    */
   private function checkEmailExists($email) {
-    $url = $this->apiUrl . '/emails?where[address]=' . $email;
+    $url = "$this->apiUrl/emails?where[address]=$email";
     $json = $this->httpHelper->get($url);
 
     return sizeof($json->data) > 0;
